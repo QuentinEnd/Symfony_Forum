@@ -1,2 +1,4 @@
-# Symfony_Forum
-Création d'un mini forum sous Symfony 3.0
+sf-forum
+========
+
+A Symfony project created on March 9, 2017, 2:10 pm.

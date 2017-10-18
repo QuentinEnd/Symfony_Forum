@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <h2>Nouveau Thème</h2>
+    {{ form(themeForm) }}
+
+    <h2>Liste des Thèmes</h2>
+
+    <ul>
+        {% for theme in themeList %}
+            <li>{{ theme.name }}</li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

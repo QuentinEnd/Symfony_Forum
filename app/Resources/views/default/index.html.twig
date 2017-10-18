@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>Liste des thèmes</h1>
+
+    <table class="table">
+        <tbody>
+        <!--Boucle pour récupérer la liste des thèmes de façon dynamique -->
+        {% for theme in themeList %}
+            <tr>
+                <td>
+                    <a href="{{ path('theme_details', {'slug': theme.slug}) }}">
+                        {{ theme.name }}
+                    </a>
+                </td>
+                <!--numberOfPosts est déclaré dans l'ordre SQL du fichier ThemeRepository en tant qu'alias -->
+                <td>{{ theme.numberOfPosts }} posts</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block aside %}
+<h3>Les posts par années</h3>
+    <!--Boucle pour afficher le nombre de post par années dans une liste de façon dynamique-->
+    <ul>
+        {% for item in postList %}
+            <li>
+                <a href="{{ path('post_by_year', {'year': item.yearPublished}) }}">
+                    {{ item.yearPublished }} ({{ item.numberOfPosts }})</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block javascripts %}
+    {#Récupère ce qui est présent dans la page parent (layout) pour l'avoir uniquement dans cette page#}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/ivoryckeditor/ckeditor.js') }}"></script>
+{% endblock %}
+
+

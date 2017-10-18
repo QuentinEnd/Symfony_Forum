@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <ol class="breadcrumb">
+        <li>
+            <a href="{{ path('homepage') }}">Liste des thèmes</a>
+        </li>
+    </ol>
+    {% if is_granted(["ROLE_ADMIN", "ROLE_AUTHOR"]) %}
+        {% if theme is defined %}
+            <h1>{{ theme.name }} <a href="{{ path('new_post', {'slug': theme.slug}) }}" class="btn btn-primary btn-">Nouveau
+                    Post</a></h1>
+        {% elseif title is defined %}
+            <h1>{{ title }}</h1>
+        {% endif %}
+    {% endif %}
+
+    <table class="table">
+        <tbody>
+        <!--Boucle sur l'ensemble des POST pour les afficher de façon dynamique -->
+        {% for post in postList %}
+            <tr>
+                <td>
+                    <!--J'affiche les titres des POSTS -->
+                    <a href="{{ path('post_details', {'slug': post.slug}) }}">
+                        {{ post.title }}
+                    </a>
+                </td>
+                <!--J'affiche le nombre de réponses -->
+                <td>{{ post.answers | length }} réponses</td>
+                <td>
+                    {% if is_granted("ROLE_AUTHOR") %}
+                        {% if app.user.id == post.author.id %}
+                            <a href="{{ path('post_edit', {'slug': post.slug}) }}" class="btn btn-success btn-xs">Modifier</a>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+
+    {% if is_granted(["ROLE_ADMIN", "ROLE_AUTHOR"]) %}
+        {% if themeParAnnee is not defined %}
+            {% if addPostForm is defined %}
+                <h2>{{ title }}</h2>
+                {{ form(addPostForm) }}
+            {% elseif editPostForm is defined %}
+                <h2>{{ title }}</h2>
+                {{ form(editPostForm) }}
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}
+

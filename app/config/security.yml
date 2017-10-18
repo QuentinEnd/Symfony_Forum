@@ -1,0 +1,81 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/security.html
+security:
+
+    # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
+    providers:
+        in_memory:
+            memory:
+              users:
+                admin:
+                  password: $2y$15$otyOyZbGT3fktPf6ByFrG.85mdyA7MuQgOs13D1ndSCVrv8vZWqsS
+                  roles: ROLE_ADMIN
+                god:
+                  password: $2y$10$/oAqz/QkrEBBee1tP3x3q.u92vmIwU6GOLjh6H5jCvprkWF2kNZ/W
+                  roles: ["ROLE_SUPER_ADMIN", "ROLE_ADMIN"]
+
+        author_provider:
+          entity:
+            class: AppBundle:Author
+            property: email # la propriété utilisée comme login
+
+    encoders:
+        Symfony\Component\Security\Core\User\User:
+          algorithm: bcrypt
+          cost: 15
+        AppBundle\Entity\Author:
+          algorithm: bcrypt
+          cost: 15
+
+    role_hierarchy:
+      ROLE_SUPER_ADMIN: ROLE_ALLOWED_TO_SWITCH
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Cette route en première pour qu'il soit possible de s'authentifier. Si on avait laissé uniquement admin_firewall,
+        # il aurait fallut être déjà loggé pour pouvoir se connecter....
+        admin_login:
+          pattern: ^/admin/login$ # Ceci est une chaine qui commence par un ^ et se termine par un $
+          anonymous: ~
+
+        admin_firewall:
+        # Prend toutes les routes commençant par /admin
+          pattern: ^/admin
+          provider: in_memory
+          form_login:
+            login_path: admin_login
+            check_path: admin_login_check
+            # Redirection vers cette page si l'authentification a réussie
+            default_target_path: admin_home
+            # Pour se déconnecter et la redirection
+          logout:
+            path: admin_logout
+            target: homepage
+
+        main:
+            anonymous: true #Je n'oblige pas les gens à s'authentifier, mais ils peuvent l'être
+            pattern: ^/
+            provider: author_provider
+            form_login:
+              login-path: author_login
+              check_path: author_login_check
+              # Redirection vers cette page si l'authentification a réussie
+              default_target_path: homepage
+              # Pour se déconnecter et la redirection
+            logout:
+              path: author_logout
+              target: homepage
+
+            # activate different ways to authenticate
+
+            # http://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+            #http_basic: ~
+
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+            #form_login: ~
+    access-control:
+      - {path: ^/admin/secure, roles: ROLE_SUPER_ADMIN }

@@ -1,0 +1,67 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="{{ path('homepage') }}">Liste des thèmes</a>
+        </li>
+        <li><a href="{{ path('theme_details', {'slug': post.theme.slug}) }}">
+                {{ post.theme.name }}
+            </a>
+        </li>
+
+    </ol>
+
+    <h1>{{ post.title }}</h1>
+
+    <p>par {{ post.author.email }} il y a {{ post.createdAt | elapsed }}</p>
+
+    {% if post.imageFileName %}
+        <img src="{{ asset('uploadedFiles/' ~ post.imageFileName) }}" class="img-responsive img-rounded img-thumbnail">
+    {% endif %}
+
+    <p>{{ post.text | purify }}</p>
+
+    <hr>
+    <h2>Les réponses ({{ post.answers | length }})</h2>
+    <br><br>
+
+    <div class="col-md-8 col-md-offset-2">
+        {% if is_granted(["ROLE_ADMIN", "ROLE_AUTHOR"]) %}
+
+            {% if addAnswerForm is defined %}
+                <h2>{{ title }}</h2>
+                {{ form(addAnswerForm) }}
+            {% elseif editAnswerForm is defined %}
+                <h2>{{ title }}</h2>
+                {{ form(editAnswerForm) }}
+            {% else %}
+                <a href="{{ path('new_answer', {'slug': post.slug}) }}" class="btn btn-primary btn-sm center-block">Nouvelle
+                    Réponse</a>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    <br><br>
+    <br><br>
+
+    {% for answer in post.answers %}
+        <div class="col-md-8 col-md-offset-2">
+            <p>le {{ answer.createdAt | date('d/m/Y') }}
+                par {{ answer.author.email }}
+                {% if app.user.id == answer.author.id %}
+                    <a href="{{ path('modif_answer', {'id': answer.id}) }}" class="btn btn-success btn-xs pull-right">Modifier</a>
+                {% endif %}
+                {% if app.user.id == post.author.id %}
+                    <a href="#" class="btn btn-warning btn-xs pull-right">Supprimer</a>
+                {% endif %}
+            </p>
+            <p>{{ answer.text }}</p>
+            <hr>
+        </div>
+    {% endfor %}
+
+
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{
+  "name": "symfony-forum",
+  "homepage": "https://github.com/smaloron/symfony-forum",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
